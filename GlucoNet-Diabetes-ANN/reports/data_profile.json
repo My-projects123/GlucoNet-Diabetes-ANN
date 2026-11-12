@@ -1,0 +1,157 @@
+{
+  "n_rows": 768,
+  "n_columns": 9,
+  "duplicate_rows": 0,
+  "class_counts": {
+    "no_diabetes_0": 500,
+    "diabetes_1": 268
+  },
+  "positive_rate": 0.3489583333333333,
+  "class_balance_note": "The minority class is Outcome=1 (diabetes). Accuracy alone can look optimistic because predicting 'no diabetes' for every row would already score about 65.1% on this table.",
+  "true_nan_missing": {
+    "Pregnancies": 0,
+    "Glucose": 0,
+    "BloodPressure": 0,
+    "SkinThickness": 0,
+    "Insulin": 0,
+    "BMI": 0,
+    "DiabetesPedigreeFunction": 0,
+    "Age": 0
+  },
+  "zero_counts": {
+    "Pregnancies": 111,
+    "Glucose": 5,
+    "BloodPressure": 35,
+    "SkinThickness": 227,
+    "Insulin": 374,
+    "BMI": 11,
+    "DiabetesPedigreeFunction": 0,
+    "Age": 0
+  },
+  "zeros_treated_as_missing": {
+    "Glucose": 5,
+    "BloodPressure": 35,
+    "SkinThickness": 227,
+    "Insulin": 374,
+    "BMI": 11
+  },
+  "zeros_kept_as_valid": {
+    "Pregnancies": 111,
+    "DiabetesPedigreeFunction": 0,
+    "Age": 0
+  },
+  "missing_after_zero_recode": {
+    "Pregnancies": 0,
+    "Glucose": 5,
+    "BloodPressure": 35,
+    "SkinThickness": 227,
+    "Insulin": 374,
+    "BMI": 11,
+    "DiabetesPedigreeFunction": 0,
+    "Age": 0
+  },
+  "zero_as_missing_justification": {
+    "Glucose": "A recorded plasma glucose of 0 mg/dL is not a plausible OGTT result and is treated as a missing measurement in this dataset.",
+    "BloodPressure": "A diastolic blood pressure of 0 mm Hg is not a valid clinical reading in living adults, so 0 is treated as missing.",
+    "SkinThickness": "A triceps skinfold of 0 mm is not physiologically plausible, so 0 is treated as a missing measurement.",
+    "Insulin": "A 2-hour serum insulin of 0 is the missing-value code used in this dataset; it is not interpreted as a true lab result of zero.",
+    "BMI": "A body-mass index of 0 is not a valid measurement, so 0 is treated as missing."
+  },
+  "pregnancies_note": "Pregnancies=0 is kept. It means the person has never been pregnant, which is a valid value in this dataset of adult women.",
+  "iqr_outlier_counts": {
+    "Pregnancies": 4,
+    "Glucose": 5,
+    "BloodPressure": 45,
+    "SkinThickness": 1,
+    "Insulin": 34,
+    "BMI": 19,
+    "DiabetesPedigreeFunction": 29,
+    "Age": 9
+  },
+  "summary_stats": {
+    "Pregnancies": {
+      "count": 768.0,
+      "mean": 3.8450520833333335,
+      "std": 3.3695780626988694,
+      "min": 0.0,
+      "25%": 1.0,
+      "50%": 3.0,
+      "75%": 6.0,
+      "max": 17.0
+    },
+    "Glucose": {
+      "count": 768.0,
+      "mean": 120.89453125,
+      "std": 31.97261819513622,
+      "min": 0.0,
+      "25%": 99.0,
+      "50%": 117.0,
+      "75%": 140.25,
+      "max": 199.0
+    },
+    "BloodPressure": {
+      "count": 768.0,
+      "mean": 69.10546875,
+      "std": 19.355807170644777,
+      "min": 0.0,
+      "25%": 62.0,
+      "50%": 72.0,
+      "75%": 80.0,
+      "max": 122.0
+    },
+    "SkinThickness": {
+      "count": 768.0,
+      "mean": 20.536458333333332,
+      "std": 15.952217567727637,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 23.0,
+      "75%": 32.0,
+      "max": 99.0
+    },
+    "Insulin": {
+      "count": 768.0,
+      "mean": 79.79947916666667,
+      "std": 115.24400235133817,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 30.5,
+      "75%": 127.25,
+      "max": 846.0
+    },
+    "BMI": {
+      "count": 768.0,
+      "mean": 31.992578124999998,
+      "std": 7.884160320375446,
+      "min": 0.0,
+      "25%": 27.3,
+      "50%": 32.0,
+      "75%": 36.6,
+      "max": 67.1
+    },
+    "DiabetesPedigreeFunction": {
+      "count": 768.0,
+      "mean": 0.47187630208333325,
+      "std": 0.3313285950127749,
+      "min": 0.078,
+      "25%": 0.24375,
+      "50%": 0.3725,
+      "75%": 0.62625,
+      "max": 2.42
+    },
+    "Age": {
+      "count": 768.0,
+      "mean": 33.240885416666664,
+      "std": 11.760231540678685,
+      "min": 21.0,
+      "25%": 24.0,
+      "50%": 29.0,
+      "75%": 41.0,
+      "max": 81.0
+    }
+  },
+  "high_missingness_after_recode": [
+    "SkinThickness",
+    "Insulin"
+  ]
+}

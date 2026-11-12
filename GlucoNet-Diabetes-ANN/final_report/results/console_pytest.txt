@@ -1,0 +1,29 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Users/deepakvf/ANN/diabetes_ann/.venv/bin/python
+rootdir: /Users/deepakvf/ANN/diabetes_ann
+configfile: pytest.ini
+testpaths: tests
+collecting ... collected 20 items
+
+tests/test_data.py::test_missing_file_raises_with_instructions PASSED    [  5%]
+tests/test_data.py::test_load_standard_csv PASSED                        [ 10%]
+tests/test_data.py::test_load_headerless_csv PASSED                      [ 15%]
+tests/test_data.py::test_load_alias_columns PASSED                       [ 20%]
+tests/test_data.py::test_profile_counts_zeros_and_duplicates PASSED      [ 25%]
+tests/test_data.py::test_real_pima_csv_if_present PASSED                 [ 30%]
+tests/test_data.py::test_convert_arff PASSED                             [ 35%]
+tests/test_pipeline.py::test_zero_as_missing_keeps_pregnancies PASSED    [ 40%]
+tests/test_pipeline.py::test_imputer_statistics_come_from_training_fold_only PASSED [ 45%]
+tests/test_pipeline.py::test_feature_selection_is_inside_the_pipeline PASSED [ 50%]
+tests/test_pipeline.py::test_pipeline_is_not_a_plain_sklearn_pipeline_when_resampling PASSED [ 55%]
+tests/test_pipeline.py::test_selected_feature_names_passthrough PASSED   [ 60%]
+tests/test_pipeline.py::test_metrics_on_perfect_predictions PASSED       [ 65%]
+tests/test_pipeline.py::test_metrics_on_all_negative_predictions PASSED  [ 70%]
+tests/test_pipeline.py::test_estimators_include_ann_and_baselines PASSED [ 75%]
+tests/test_pipeline.py::test_feature_selection_frequency_plot_skips_when_unused PASSED [ 80%]
+tests/test_pipeline.py::test_seed_helper_sets_numpy PASSED               [ 85%]
+tests/test_run.py::test_profile_only_writes_reports PASSED               [ 90%]
+tests/test_train.py::test_experiment_names_use_requested_k PASSED        [ 95%]
+tests/test_train.py::test_run_comparison_on_tiny_data PASSED             [100%]
+
+============================== 20 passed in 2.68s ==============================

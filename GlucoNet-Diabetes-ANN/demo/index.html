@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GlucoNet — Diabetes risk screening with a transparent neural network</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAF9F6;
+      --ink: #1E242B;
+      --sage: #E6ECE8;
+      --accent: #C85A32;
+      --accent-deep: #A34826;
+      --line: #DCDAD3;
+      --muted: #5C656E;
+      --paper: #FFFFFF;
+      --max: 1120px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Plus Jakarta Sans", "Segoe UI", sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+    }
+    h1, h2, h3 {
+      font-family: "Newsreader", Georgia, serif;
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      margin: 0;
+    }
+    a { color: var(--accent-deep); }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 28px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      background: var(--paper);
+    }
+    .tag b { color: var(--ink); font-weight: 700; }
+    .rule { height: 1px; background: var(--line); border: 0; margin: 0; }
+    .mono { font-family: "JetBrains Mono", ui-monospace, monospace; font-variant-numeric: tabular-nums; }
+
+    header.site {
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+    .site-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 0;
+      gap: 16px;
+    }
+    .wordmark {
+      font-family: "Newsreader", Georgia, serif;
+      font-size: 22px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .wordmark span { color: var(--accent); }
+    nav a {
+      margin-left: 22px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    nav a:hover { color: var(--ink); }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 48px;
+      padding: 56px 0 64px;
+      align-items: center;
+    }
+    .hero h1 { font-size: clamp(34px, 4.4vw, 52px); max-width: 18ch; }
+    .hero .lede {
+      margin: 18px 0 28px;
+      max-width: 46ch;
+      color: var(--muted);
+      font-size: 17px;
+    }
+    .btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      border: 0;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+      padding: 13px 20px;
+      border-radius: 4px;
+    }
+    .btn:hover { background: var(--accent-deep); }
+    .btn.quiet {
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+    .btn.quiet:hover { background: var(--sage); }
+
+    .schematic {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: 22px 22px 18px;
+    }
+    .schematic .tag { margin-bottom: 14px; }
+    .layers { display: grid; grid-template-columns: 1fr 12px 1fr 12px 1fr 12px 1fr; align-items: stretch; gap: 0; }
+    .layer {
+      border: 1px solid var(--line);
+      background: var(--bg);
+      padding: 14px 10px;
+      text-align: center;
+      min-height: 148px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .layer.out { background: var(--sage); }
+    .layer .n {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 28px;
+      line-height: 1;
+    }
+    .layer small { display: block; margin-top: 8px; color: var(--muted); font-size: 11px; letter-spacing: 0.04em; }
+    .arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 16px;
+    }
+    .schematic p {
+      margin: 14px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    section.block { padding: 56px 0; border-top: 1px solid var(--line); }
+    .head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .head h2 { font-size: 32px; max-width: 18ch; }
+
+    .tool {
+      display: grid;
+      grid-template-columns: 1.35fr 0.85fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .tool-form { padding: 28px; border-right: 1px solid var(--line); }
+    .cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    fieldset { border: 0; margin: 0; padding: 0; }
+    legend {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .field { margin-bottom: 12px; }
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .field .unit { color: var(--muted); font-weight: 500; font-size: 12px; }
+    .field input {
+      width: 100%;
+      margin-top: 5px;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      padding: 10px 11px;
+      font: 15px/1.2 "JetBrains Mono", ui-monospace, monospace;
+      font-variant-numeric: tabular-nums;
+      color: var(--ink);
+    }
+    .field input:focus { outline: 1px solid var(--ink); background: #fff; }
+    .form-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
+    .result {
+      padding: 28px;
+      background: var(--sage);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 100%;
+    }
+    .pct {
+      font-family: "JetBrains Mono", monospace;
+      font-size: 56px;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+    }
+    .tier {
+      display: inline-block;
+      margin-top: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+    .tier.high { color: var(--accent-deep); border-color: var(--accent); }
+    .meter { height: 6px; background: #fff; border: 1px solid var(--line); margin: 18px 0; }
+    .meter > i { display: block; height: 100%; width: 0; background: var(--accent); }
+    .result .fine { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+    .method {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1.25fr;
+      border: 1px solid var(--line);
+    }
+    .method article {
+      padding: 24px;
+      background: var(--paper);
+    }
+    .method article + article { border-left: 1px solid var(--line); }
+    .method h3 { font-size: 22px; margin: 10px 0 12px; }
+    .method p, .method li { font-size: 14px; color: #3a424a; }
+    .method ul { margin: 0; padding-left: 18px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    th, td { text-align: left; padding: 7px 0; border-bottom: 1px solid var(--line); }
+    th { color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: 0.04em; }
+    td:nth-child(n+2), th:nth-child(n+2) { text-align: right; font-family: "JetBrains Mono", monospace; }
+
+    .context {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 36px;
+      align-items: start;
+    }
+    .bars { border: 1px solid var(--line); background: var(--paper); padding: 8px 0; }
+    .bar-row {
+      display: grid;
+      grid-template-columns: 150px 1fr 64px;
+      gap: 12px;
+      align-items: center;
+      padding: 9px 18px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .bar-row:last-child { border-bottom: 0; }
+    .track { height: 8px; background: var(--sage); }
+    .track > i { display: block; height: 100%; background: var(--ink); }
+    .bar-row.lead .track > i { background: var(--accent); }
+    .note {
+      border: 1px solid var(--line);
+      background: var(--paper);
+      padding: 24px;
+    }
+    .note p { margin: 10px 0 0; color: #3a424a; }
+
+    footer.site { border-top: 1px solid var(--line); padding: 36px 0 48px; }
+    footer .grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 28px;
+    }
+    footer h3 { font-size: 18px; }
+    footer p, footer li { font-size: 13px; color: var(--muted); }
+    footer ul { margin: 8px 0 0; padding-left: 16px; }
+
+    .warn {
+      margin-top: 28px;
+      border: 1px solid var(--line);
+      padding: 14px 16px;
+      font-size: 13px;
+      background: var(--paper);
+    }
+
+    @media (max-width: 900px) {
+      nav { display: none; }
+      .hero, .tool, .method, .context, footer .grid, .cols { grid-template-columns: 1fr; }
+      .tool-form { border-right: 0; border-bottom: 1px solid var(--line); }
+      .method article + article { border-left: 0; border-top: 1px solid var(--line); }
+      .layers { grid-template-columns: 1fr; gap: 8px; }
+      .arrow { transform: rotate(90deg); height: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site">
+    <div class="wrap site-bar">
+      <a class="wordmark" href="#top">Gluco<span>Net</span></a>
+      <nav>
+        <a href="#assess">Assessment</a>
+        <a href="#method">Method</a>
+        <a href="#features">Clinical context</a>
+        <a href="#disclaimer">Disclaimer</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="wrap" id="top">
+    <section class="hero">
+      <div>
+        <span class="tag"><b>00</b> / CLINICAL RESEARCH TOOL</span>
+        <h1 style="margin-top:18px">Early diabetes risk screening, powered by transparent neural networks</h1>
+        <p class="lede">
+          Eight routine measurements — glucose, insulin, BMI, blood pressure, pregnancies,
+          skinfold, pedigree score, and age — are passed through a small feed-forward network.
+          The output is a probability, not a diagnosis.
+        </p>
+        <a class="btn" href="#assess">Run Risk Assessment</a>
+      </div>
+      <aside class="schematic" aria-label="Network schematic">
+        <span class="tag"><b>01</b> / MODEL ARCHITECTURE</span>
+        <div class="layers">
+          <div class="layer"><span class="n">8</span><small>INPUT<br>biomarkers</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="layer"><span class="n">16</span><small>HIDDEN<br>ReLU</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="layer"><span class="n">8</span><small>HIDDEN<br>ReLU</small></div>
+          <div class="arrow" aria-hidden="true">→</div>
+          <div class="layer out"><span class="n">1</span><small>OUTPUT<br>sigmoid P</small></div>
+        </div>
+        <p>289 trainable weights. Fitted on the Pima Indians Diabetes table (768 examinations of adult women). Training-fold oversampling, median imputation, and scaling never see the row being scored.</p>
+      </aside>
+    </section>
+  </div>
+
+  <hr class="rule" />
+
+  <section class="block" id="assess">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="tag"><b>02</b> / BIOMARKER INPUT</span>
+          <h2 style="margin-top:12px">Enter the eight clinical markers</h2>
+        </div>
+        <p style="max-width:36ch;color:var(--muted);margin:0;font-size:14px">
+          Zeros in glucose, blood pressure, skinfold, insulin, or BMI are treated as missing and filled from training-fold medians. A recorded pregnancy count of zero is kept.
+        </p>
+      </div>
+      <div class="tool">
+        <form class="tool-form" id="form">
+          <div class="cols">
+            <fieldset>
+              <legend>Metabolic metrics</legend>
+              <div class="field">
+                <label>Glucose <span class="unit">mg/dL</span></label>
+                <input name="Glucose" type="number" min="0" step="1" value="121" required />
+              </div>
+              <div class="field">
+                <label>Insulin <span class="unit">µU/mL</span></label>
+                <input name="Insulin" type="number" min="0" step="1" value="80" required />
+              </div>
+              <div class="field">
+                <label>Body-mass index <span class="unit">kg/m²</span></label>
+                <input name="BMI" type="number" min="0" step="0.1" value="32.0" required />
+              </div>
+              <div class="field">
+                <label>Diabetes pedigree <span class="unit">score</span></label>
+                <input name="DiabetesPedigreeFunction" type="number" min="0" step="0.001" value="0.372" required />
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Patient profile</legend>
+              <div class="field">
+                <label>Pregnancies <span class="unit">count</span></label>
+                <input name="Pregnancies" type="number" min="0" step="1" value="3" required />
+              </div>
+              <div class="field">
+                <label>Diastolic blood pressure <span class="unit">mm Hg</span></label>
+                <input name="BloodPressure" type="number" min="0" step="1" value="72" required />
+              </div>
+              <div class="field">
+                <label>Triceps skinfold <span class="unit">mm</span></label>
+                <input name="SkinThickness" type="number" min="0" step="1" value="23" required />
+              </div>
+              <div class="field">
+                <label>Age <span class="unit">years</span></label>
+                <input name="Age" type="number" min="21" step="1" value="33" required />
+              </div>
+            </fieldset>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Run Risk Assessment</button>
+            <button class="btn quiet" type="button" data-preset="high">Higher-glucose example</button>
+            <button class="btn quiet" type="button" data-preset="low">Lower-glucose example</button>
+          </div>
+        </form>
+        <aside class="result" id="result" aria-live="polite">
+          <div>
+            <span class="tag"><b>03</b> / RISK ESTIMATE</span>
+            <p style="margin:16px 0 6px;font-size:13px;color:var(--muted)">Model probability at threshold 0.5</p>
+            <div class="pct" id="pct">—</div>
+            <div class="tier" id="tier">Awaiting input</div>
+            <div class="meter" aria-hidden="true"><i id="bar"></i></div>
+            <p id="detail" style="margin:0 0 12px;font-size:14px">The network has not scored a record yet. Use the form, or load one of the two worked examples from the report.</p>
+          </div>
+          <p class="fine">Educational screening support only. This estimate comes from a 768-row historical cohort of adult Pima women. It is not a clinical diagnosis and does not replace laboratory testing or a physician’s judgement.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="method">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="tag"><b>04</b> / METHOD</span>
+          <h2 style="margin-top:12px">How the neural network works</h2>
+        </div>
+      </div>
+      <div class="method">
+        <article>
+          <span class="tag"><b>04A</b> / PREPROCESSING</span>
+          <h3>Data, without leakage</h3>
+          <p>Impossible zeros in glucose, blood pressure, skinfold, insulin, and BMI are recoded as missing. Pregnancies of zero are left as a real value. Medians and z-scores are learned on the training fold only. The minority class is oversampled inside that fold; the scored row is never copied.</p>
+        </article>
+        <article>
+          <span class="tag"><b>04B</b> / TOPOLOGY</span>
+          <h3>A small feed-forward net</h3>
+          <ul>
+            <li>Input layer: 8 biomarkers</li>
+            <li>Hidden: 16 then 8 units, ReLU</li>
+            <li>Output: 1 unit, logistic sigmoid</li>
+            <li>Adam, L2 of 10⁻³, early stopping</li>
+          </ul>
+          <p>Two hidden layers are enough for this table. A deeper net did not improve ranking in the ablation study.</p>
+        </article>
+        <article>
+          <span class="tag"><b>04C</b> / VALIDATION</span>
+          <h3>Compared on the same folds</h3>
+          <table>
+            <thead>
+              <tr><th>Model</th><th>Acc.</th><th>Prec.</th><th>Rec.</th><th>ROC-AUC</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Dummy (majority)</td><td>0.651</td><td>0.000</td><td>0.000</td><td>0.500</td></tr>
+              <tr><td>Logistic regression</td><td>0.754</td><td>0.623</td><td>0.718</td><td>0.836</td></tr>
+              <tr><td>Random forest</td><td>0.761</td><td>0.636</td><td>0.761</td><td>0.838</td></tr>
+              <tr><td>GlucoNet ANN + ROS</td><td>0.746</td><td>0.613</td><td>0.768</td><td>0.834</td></tr>
+            </tbody>
+          </table>
+          <p style="margin:12px 0 0">10 × 5 repeated stratified CV. Hold-out: 43 of 54 diabetic cases, ROC-AUC 0.821. Accuracy 0.746 sits only a little above the 0.651 majority-class floor — ranking, not accuracy, is the useful number.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="features">
+    <div class="wrap">
+      <div class="head">
+        <div>
+          <span class="tag"><b>05</b> / FEATURE IMPORTANCE</span>
+          <h2 style="margin-top:12px">What the network actually uses</h2>
+        </div>
+      </div>
+      <div class="context">
+        <div class="bars" role="img" aria-label="Permutation importance of each biomarker">
+          <div class="bar-row lead"><span>Glucose</span><div class="track"><i style="width:100%"></i></div><span class="mono">0.120</span></div>
+          <div class="bar-row"><span>Age</span><div class="track"><i style="width:23%"></i></div><span class="mono">0.028</span></div>
+          <div class="bar-row"><span>BMI</span><div class="track"><i style="width:22%"></i></div><span class="mono">0.026</span></div>
+          <div class="bar-row"><span>Pregnancies</span><div class="track"><i style="width:20%"></i></div><span class="mono">0.024</span></div>
+          <div class="bar-row"><span>Pedigree</span><div class="track"><i style="width:14%"></i></div><span class="mono">0.017</span></div>
+          <div class="bar-row"><span>Insulin</span><div class="track"><i style="width:12%"></i></div><span class="mono">0.014</span></div>
+          <div class="bar-row"><span>Skinfold</span><div class="track"><i style="width:12%"></i></div><span class="mono">0.014</span></div>
+          <div class="bar-row"><span>Blood pressure</span><div class="track"><i style="width:5%"></i></div><span class="mono">0.006</span></div>
+        </div>
+        <aside class="note">
+          <span class="tag"><b>05A</b> / READING THE BARS</span>
+          <h3 style="margin-top:14px;font-size:24px">Clinical context still comes first</h3>
+          <p>The bars are the drop in hold-out ROC-AUC when a column is shuffled. Glucose carries most of the signal, then age, BMI, and pregnancies — the same order a clinic would expect for type 2 risk.</p>
+          <p>That agreement is useful, and it is also a warning. A network that leans almost entirely on one lab value is not discovering a hidden pattern. It is restating a known relationship on a small, historical table. A physician still has to place any score next to symptoms, family history, and a proper diagnostic test.</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site" id="disclaimer">
+    <div class="wrap">
+      <div class="grid">
+        <div>
+          <h3>GlucoNet</h3>
+          <p>Course 21CSE326T, Artificial Neural Networks. B.Tech. CSE (AIML), SRM Institute of Science and Technology, Tiruchirappalli. Shanmugapriyan J (RA2411026050011) and Deepak V F (RA2411026050015).</p>
+        </div>
+        <div>
+          <h3>Source material</h3>
+          <ul>
+            <li>Pima Indians Diabetes Database, NIDDK; UCI extract, 1990</li>
+            <li>Smith et al., 1988, ADAP neural model on this cohort</li>
+            <li>Architecture 8–16–8–1, 289 parameters, leakage-safe pipeline</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Documents</h3>
+          <ul>
+            <li>Project report and presentation (course submission)</li>
+            <li>Local CSV only — this page does not upload patient records</li>
+          </ul>
+        </div>
+      </div>
+      <p class="warn" id="legal">
+        This tool is for education and screening-style illustration. It does not diagnose diabetes, does not replace fasting glucose, OGTT, or HbA1c, and should not be used to make treatment decisions. The underlying sample is adult women from one community, examined decades ago. Do not apply the score to men, children, or other populations.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const presets = {
+      high: { Pregnancies: 2, Glucose: 168, BloodPressure: 74, SkinThickness: 0, Insulin: 0, BMI: 36.4, DiabetesPedigreeFunction: 0.62, Age: 47 },
+      low: { Pregnancies: 1, Glucose: 94, BloodPressure: 68, SkinThickness: 22, Insulin: 80, BMI: 24.1, DiabetesPedigreeFunction: 0.21, Age: 26 }
+    };
+    const form = document.getElementById("form");
+    document.querySelectorAll("[data-preset]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        Object.entries(presets[btn.dataset.preset]).forEach(([k, v]) => { form.elements[k].value = v; });
+        form.requestSubmit();
+      });
+    });
+
+    function tierFor(p) {
+      if (p >= 0.5) return { label: "Higher estimated risk", cls: "high", text: "At the pre-declared threshold of 0.5 the network would call this record class 1. That is a ranking, not a laboratory confirmation." };
+      if (p >= 0.35) return { label: "Intermediate estimate", cls: "", text: "The probability sits below the 0.5 cut. The network is uncertain; a clinic would still rely on a diagnostic test if symptoms or history warrant it." };
+      return { label: "Lower estimated risk", cls: "", text: "The network places this record on the lower-probability side of the 0.5 cut. It is still not a clearance from diabetes." };
+    }
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {};
+      new FormData(form).forEach((v, k) => { payload[k] = Number(v); });
+      const pct = document.getElementById("pct");
+      const tier = document.getElementById("tier");
+      const detail = document.getElementById("detail");
+      try {
+        const res = await fetch("/predict", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Prediction failed");
+        const p = data.probability;
+        pct.textContent = (p * 100).toFixed(1) + "%";
+        document.getElementById("bar").style.width = (p * 100).toFixed(1) + "%";
+        const t = tierFor(p);
+        tier.textContent = t.label;
+        tier.className = "tier " + t.cls;
+        detail.textContent = t.text;
+      } catch (err) {
+        pct.textContent = "—";
+        tier.textContent = "Unavailable";
+        tier.className = "tier";
+        detail.textContent = "The scoring service did not respond. Start the local demo server (python demo/app.py) and try again.";
+      }
+    });
+  </script>
+</body>
+</html>

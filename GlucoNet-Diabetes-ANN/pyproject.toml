@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "diabetes-prediction"
+version = "0.1.0"
+description = "Beginner-friendly diabetes prediction with a small ANN and classical baselines."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "scikit-learn>=1.5,<1.6",
+    "imbalanced-learn>=0.12,<0.13",
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
+    "joblib>=1.3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.4", "jupyter>=1.0", "ipykernel>=6.25"]
+
+[project.scripts]
+diabetes-predict = "diabetes_prediction.run:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

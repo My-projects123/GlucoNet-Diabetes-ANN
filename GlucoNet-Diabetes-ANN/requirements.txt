@@ -1,0 +1,10 @@
+numpy>=1.24,<3
+pandas>=2.0
+scikit-learn>=1.5,<1.6
+imbalanced-learn>=0.12,<0.13
+matplotlib>=3.7
+seaborn>=0.13
+joblib>=1.3
+pytest>=7.4
+jupyter>=1.0
+ipykernel>=6.25

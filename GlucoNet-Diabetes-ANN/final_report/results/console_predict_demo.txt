@@ -1,0 +1,23 @@
+Proposed ANN: 8 -> 16 (ReLU) -> 8 (ReLU) -> 1 (sigmoid), trained on 614 rows
+Loaded pipeline steps: zero_as_missing -> impute -> scale -> resample -> clf
+
+ Row   Preg   Gluc     BP   Skin   Insu    BMI    DPF    Age  P(diab)  Pred  True  Result
+------------------------------------------------------------------------------------------
+  44      7    159     64      0      0   27.4  0.294     40    0.882     1     0  false alarm
+ 672     10     68    106     23     49   35.5  0.285     47    0.058     0     0  correct
+ 700      2    122     76     27    200   35.9  0.483     26    0.675     1     0  false alarm
+ 630      7    114     64      0      0   27.4  0.732     34    0.645     1     1  correct
+  81      2     74      0      0      0    0.0  0.102     22    0.020     0     0  correct
+ 389      3    100     68     23     81   31.6  0.949     28    0.421     0     0  correct
+ 387      8    105    100     36      0   43.3  0.239     45    0.433     0     1  missed case
+ 408      8    197     74      0      0   25.9  1.191     39    0.871     1     1  correct
+ 163      2    100     64     23      0   29.7  0.368     21    0.062     0     0  correct
+ 335      0    165     76     43    255   47.9  0.259     26    0.927     1     0  false alarm
+
+Hold-out rows scored: 154; correct at threshold 0.5: 115 (74.7%)
+
+Illustrative new inputs (zeros in Skin/Insulin are treated as missing):
+  Record 1: P(diabetes) = 0.914 -> Outcome = 1 (higher risk)
+  Record 2: P(diabetes) = 0.018 -> Outcome = 0 (lower risk)
+
+Educational model only — not a medical diagnostic tool. The Pima Indians Diabetes dataset is small (768 rows) and limited to adult women (age 21+) of Pima heritage. Results do not generalize to other populations, men, children, or clinical decision-making.

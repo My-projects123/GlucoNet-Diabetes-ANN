@@ -1,0 +1,173 @@
+Diabetes Prediction System — final experiments
+Loaded 768 rows x 8 predictors from the local CSV.
+Class counts: 0 -> 500, 1 -> 268  (seed 42)
+
+[1/8] Seeded 5-fold comparison (13 configurations)...
+
+5-fold CV (mean±std over folds)
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+Dummy (majority)                .651±.002  .000±.000  .000±.000 1.000±.000  .000±.000  .500±.000  .349±.002
+LogReg     all 8 -              .747±.045  .623±.070  .727±.052  .758±.074  .669±.045  .836±.023  .725±.041
+LogReg     all 8 +ROS           .742±.053  .619±.077  .709±.043  .760±.076  .659±.053  .834±.023  .719±.041
+LogReg     k=5   -              .737±.048  .613±.068  .690±.056  .762±.069  .648±.053  .826±.035  .711±.057
+LogReg     k=5   +ROS           .737±.057  .615±.079  .686±.066  .764±.075  .646±.065  .827±.036  .715±.055
+RandForest all 8 -              .766±.038  .636±.050  .780±.037  .758±.056  .700±.037  .837±.023  .712±.020
+RandForest all 8 +ROS           .759±.042  .631±.057  .769±.038  .754±.066  .691±.038  .832±.022  .702±.013
+RandForest k=5   -              .766±.038  .640±.056  .769±.021  .764±.063  .697±.032  .837±.029  .717±.026
+RandForest k=5   +ROS           .762±.040  .633±.058  .776±.019  .754±.064  .696±.035  .840±.030  .725±.030
+MLP-ANN    all 8 -              .762±.033  .698±.078  .571±.058  .864±.047  .625±.048  .832±.033  .699±.063
+MLP-ANN    all 8 +ROS           .746±.046  .613±.067  .769±.021  .734±.069  .680±.044  .834±.024  .696±.056
+MLP-ANN    k=5   -              .741±.033  .657±.074  .556±.054  .840±.051  .600±.043  .789±.065  .671±.066
+MLP-ANN    k=5   +ROS           .751±.043  .622±.058  .750±.059  .752±.063  .678±.045  .842±.028  .727±.039
+
+[2/8] 10 x 5 repeated stratified CV for the main models...
+
+Repeated CV, 50 train/test splits (mean±std)
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+Dummy (majority)                .651±.002  .000±.000  .000±.000 1.000±.000  .000±.000  .500±.000  .349±.002
+Logistic regression             .754±.034  .632±.047  .718±.064  .774±.042  .671±.046  .836±.027  .722±.048
+Random forest                   .761±.030  .632±.041  .761±.048  .761±.039  .690±.037  .838±.028  .717±.051
+MLP ANN (no rebalancing)        .760±.033  .695±.063  .560±.080  .867±.035  .617±.063  .830±.030  .704±.054
+Proposed MLP ANN (+ROS)         .746±.035  .610±.047  .768±.050  .734±.052  .679±.038  .834±.028  .711±.056
+
+Corrected resampled t-tests, proposed minus comparator (difference, p-value):
+  vs Logistic regression       ROC-AUC -0.002 (p=0.898)  F1 +0.008 (p=0.709)  Sens +0.050 (p=0.069)
+  vs Random forest             ROC-AUC -0.004 (p=0.739)  F1 -0.011 (p=0.592)  Sens +0.007 (p=0.787)
+  vs MLP ANN (no rebalancing)  ROC-AUC +0.004 (p=0.634)  F1 +0.062 (p=0.041)  Sens +0.208 (p=0.000)
+
+[3/8] Ablation study (15 splits per configuration)...
+
+Ablation — component
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+Proposed (full pipeline)        .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+− zero recoding (zeros kept)    .733±.041  .597±.054  .740±.054  .729±.059  .659±.044  .820±.035  .692±.058
+Recode Pregnancies = 0 as well  .747±.046  .614±.063  .772±.045  .734±.069  .682±.045  .832±.039  .707±.072
+Median → mean imputation        .753±.039  .619±.054  .777±.051  .740±.058  .688±.041  .839±.033  .711±.069
+Median → KNN imputation         .738±.038  .601±.051  .765±.038  .723±.058  .672±.037  .826±.029  .691±.060
+− standard scaling              .651±.043  .513±.063  .675±.127  .639±.122  .571±.037  .721±.038  .600±.055
+− oversampling (imbalanced)     .754±.038  .684±.077  .553±.088  .861±.041  .608±.072  .831±.036  .700±.069
+ROS → SMOTE                     .750±.035  .617±.051  .772±.040  .739±.060  .684±.031  .836±.029  .707±.063
++ SelectKBest (k = 5)           .739±.038  .602±.053  .767±.041  .723±.060  .673±.036  .828±.040  .702±.071
+− early stopping                .714±.040  .583±.058  .657±.061  .745±.055  .616±.049  .784±.038  .644±.059
+
+Ablation — architecture
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+8                               .730±.044  .592±.056  .765±.044  .711±.070  .665±.040  .824±.035  .703±.071
+16                              .756±.038  .629±.055  .753±.051  .759±.052  .684±.043  .829±.038  .708±.069
+32                              .757±.035  .630±.052  .756±.038  .758±.053  .686±.035  .836±.028  .713±.058
+16 → 8                          .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+32 → 16                         .753±.040  .625±.053  .745±.069  .758±.051  .678±.051  .835±.035  .715±.061
+64 → 32                         .754±.033  .625±.046  .753±.056  .755±.051  .681±.038  .831±.029  .692±.051
+64 → 32 → 16                    .740±.038  .610±.052  .729±.070  .746±.061  .662±.044  .821±.031  .686±.053
+
+Ablation — activation
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+relu                            .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+tanh                            .740±.040  .603±.053  .774±.046  .723±.059  .676±.039  .835±.030  .707±.057
+logistic                        .721±.045  .582±.057  .760±.055  .701±.074  .657±.041  .813±.039  .679±.070
+
+Ablation — optimiser
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+Adam                            .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+SGD + momentum                  .757±.038  .625±.051  .779±.039  .746±.052  .692±.039  .836±.034  .712±.067
+L-BFGS                          .703±.034  .575±.049  .591±.060  .763±.051  .581±.044  .754±.039  .573±.054
+
+Ablation — alpha
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+1e-05                           .747±.037  .613±.053  .768±.038  .736±.059  .680±.035  .837±.031  .708±.065
+0.0001                          .749±.040  .615±.056  .775±.036  .735±.060  .684±.039  .837±.031  .707±.063
+0.001                           .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+0.01                            .749±.038  .616±.055  .767±.033  .739±.058  .682±.037  .836±.031  .706±.063
+0.1                             .747±.041  .613±.057  .767±.044  .736±.061  .680±.042  .838±.032  .710±.067
+1                               .733±.050  .592±.060  .786±.040  .704±.071  .674±.046  .836±.031  .706±.067
+
+Ablation — k_features
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+3                               .736±.046  .597±.058  .772±.055  .717±.062  .672±.049  .828±.038  .704±.063
+4                               .732±.045  .595±.057  .739±.062  .728±.055  .658±.052  .825±.040  .711±.061
+5                               .739±.038  .602±.053  .767±.041  .723±.060  .673±.036  .828±.040  .702±.071
+6                               .740±.038  .604±.050  .759±.046  .730±.054  .671±.039  .829±.035  .714±.062
+7                               .719±.031  .575±.043  .782±.076  .685±.067  .660±.031  .817±.026  .688±.061
+8                               .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+
+[4/8] Leakage experiments...
+
+Leakage experiments (15 splits each)
+configuration                         Acc       Prec       Sens       Spec         F1    ROC-AUC     PR-AUC
+-----------------------------------------------------------------------------------------------------------
+MLP: Leakage-safe (proposed)    .750±.043  .617±.061  .772±.039  .737±.063  .684±.042  .837±.031  .706±.063
+MLP: Impute+scale on all rows   .749±.040  .615±.055  .771±.036  .737±.059  .683±.039  .840±.033  .715±.067
+MLP: +SelectKBest on all rows   .743±.048  .609±.062  .770±.046  .729±.072  .678±.046  .831±.039  .710±.064
+MLP: Oversample before CV       .765±.034  .753±.040  .793±.052  .737±.052  .771±.035  .850±.025  .825±.040
+MLP: SMOTE before CV            .773±.023  .758±.026  .805±.040  .741±.038  .780±.024  .856±.016  .838±.024
+RF: Leakage-safe (proposed)     .763±.036  .633±.050  .776±.033  .755±.054  .696±.036  .836±.031  .711±.055
+RF: Impute+scale on all rows    .761±.036  .632±.050  .774±.031  .755±.053  .694±.035  .836±.031  .710±.054
+RF: +SelectKBest on all rows    .758±.036  .627±.048  .775±.042  .749±.056  .692±.035  .836±.028  .706±.042
+RF: Oversample before CV        .804±.027  .772±.024  .863±.042  .745±.031  .815±.027  .881±.022  .861±.031
+RF: SMOTE before CV             .806±.020  .775±.018  .861±.038  .750±.027  .816±.021  .882±.020  .865±.030
+
+[5/8] Nested vs non-nested hyperparameter selection (ROC-AUC)...
+  Best non-nested grid point (16,)|0.1: ROC-AUC 0.835
+  Nested CV estimate: ROC-AUC 0.819 ± 0.028
+  outer fold 1: chose hidden=(16, 8) alpha=0.1
+  outer fold 2: chose hidden=(32, 16) alpha=0.1
+  outer fold 3: chose hidden=(32, 16) alpha=0.001
+  outer fold 4: chose hidden=(32, 16) alpha=0.1
+  outer fold 5: chose hidden=(16,) alpha=0.001
+
+[6/8] Seed stability of the proposed ANN (10 seeds, fixed folds)...
+  Acc      mean 0.735  std 0.019  range [0.701, 0.754]
+  Prec     mean 0.605  std 0.026  range [0.564, 0.639]
+  Sens     mean 0.732  std 0.027  range [0.679, 0.769]
+  Spec     mean 0.737  std 0.026  range [0.704, 0.782]
+  F1       mean 0.659  std 0.021  range [0.615, 0.686]
+  ROC-AUC  mean 0.822  std 0.013  range [0.799, 0.840]
+  PR-AUC   mean 0.691  std 0.018  range [0.665, 0.722]
+
+[7/8] Learning curve, loss curve, and threshold sweep...
+  n_train= 122  train ROC-AUC 0.848  validation ROC-AUC 0.799
+  n_train= 221  train ROC-AUC 0.863  validation ROC-AUC 0.812
+  n_train= 319  train ROC-AUC 0.833  validation ROC-AUC 0.797
+  n_train= 417  train ROC-AUC 0.846  validation ROC-AUC 0.818
+  n_train= 515  train ROC-AUC 0.877  validation ROC-AUC 0.832
+  n_train= 614  train ROC-AUC 0.856  validation ROC-AUC 0.832
+  Fold-1 training stopped after 36 epochs; trainable parameters = 289
+  Youden-optimal OOF threshold 0.400: sensitivity 0.862, specificity 0.652
+
+[8/8] Stratified 80/20 hold-out test (fit once, test once)...
+  Logistic regression       Acc 0.734  Sens 0.704  Spec 0.750  F1 0.650  ROC 0.813  PR 0.673
+  Random forest             Acc 0.734  Sens 0.722  Spec 0.740  F1 0.655  ROC 0.821  PR 0.698
+  MLP ANN (no rebalancing)  Acc 0.727  Sens 0.593  Spec 0.800  F1 0.604  ROC 0.807  PR 0.645
+  Proposed MLP ANN (+ROS)   Acc 0.747  Sens 0.796  Spec 0.720  F1 0.688  ROC 0.821  PR 0.679
+
+Classification report — proposed MLP ANN on the 154-row hold-out test set:
+              precision    recall  f1-score   support
+
+ No diabetes      0.867     0.720     0.787       100
+    Diabetes      0.606     0.796     0.688        54
+
+    accuracy                          0.747       154
+   macro avg      0.737     0.758     0.737       154
+weighted avg      0.776     0.747     0.752       154
+
+Permutation importance (mean drop in hold-out ROC-AUC, 30 repeats):
+  Glucose                    +0.1200 ± 0.0266
+  Age                        +0.0276 ± 0.0093
+  BMI                        +0.0260 ± 0.0129
+  Pregnancies                +0.0244 ± 0.0122
+  DiabetesPedigreeFunction   +0.0168 ± 0.0101
+  Insulin                    +0.0142 ± 0.0103
+  SkinThickness              +0.0139 ± 0.0080
+  BloodPressure              +0.0062 ± 0.0067
+
+Saved /Users/deepakvf/ANN/diabetes_ann/final_report/results/final_results.json
+Saved /Users/deepakvf/ANN/diabetes_ann/final_report/results/proposed_mlp_pipeline.joblib
+Total runtime: 196.5 s
